@@ -14,7 +14,7 @@ class Bandit:
         else:
             return 0
 
-def quality(R, Q=0, n=1):
+def quality(R, Q, n):
     return Q + 1/n * (R - Q)
 
 
@@ -39,53 +39,54 @@ class Agent:
             # random exploration
             return np.random.randint(0, self.action_size)
 
-# set random seed
-RANDOM = 1
-if RANDOM == 0:
-    np.random.seed(42) 
+if __name__ == '__main__':
+    # set random seed
+    RANDOM = 1
+    if RANDOM == 0:
+        np.random.seed(42) 
 
-bandit = Bandit()
-agent = Agent()
-steps = 1000
-total_reward = 0
-total_rewards = []
-rates = []
-actions = []
+    bandit = Bandit()
+    agent = Agent()
+    steps = 1000
+    total_reward = 0
+    total_rewards = []
+    rates = []
+    actions = []
 
-# Start to play
-for i in range(steps):
-    action = agent.get_action()
-    reward = bandit.play(action)
-    agent.update(reward, action)
-    total_reward += reward
+    # Start to play
+    for i in range(steps):
+        action = agent.get_action()
+        reward = bandit.play(action)
+        agent.update(reward, action)
+        total_reward += reward
 
-    actions.append(action)
-    total_rewards.append(total_reward)
-    rates.append(total_reward / (i+1)) 
+        actions.append(action)
+        total_rewards.append(total_reward)
+        rates.append(total_reward / (i+1)) 
 
 
 
-# Show results
-import matplotlib.pyplot as plt
+    # Show results
+    import matplotlib.pyplot as plt
 
-plt.figure('Results',figsize=[10,5])
+    plt.figure('Results',figsize=[10,5])
 
-plt.subplot(121)
-plt.ylabel('Total Rewards')
-plt.xlabel('Steps')
-plt.plot(total_rewards)
+    plt.subplot(121)
+    plt.ylabel('Total Rewards')
+    plt.xlabel('Steps')
+    plt.plot(total_rewards)
 
-plt.subplot(122)
-plt.ylabel('Rates')
-plt.xlabel('Steps')
-plt.plot(rates)
+    plt.subplot(122)
+    plt.ylabel('Rates')
+    plt.xlabel('Steps')
+    plt.plot(rates)
 
-values, counts = np.unique(actions, return_counts=True)
-idx = np.argmax(counts)
-most_common = values[idx]
-freq = counts[idx]
+    values, counts = np.unique(actions, return_counts=True)
+    idx = np.argmax(counts)
+    most_common = values[idx]
+    freq = counts[idx]
 
-print(f'Most common action is {most_common}, which is chosen by agent {freq} times!')
-print(bandit.rates)
+    print(f'Most common action is {most_common}, which is chosen by agent {freq} times!')
+    print(bandit.rates)
 
-plt.show()
+    plt.show()
